@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: donation
+  datasource:
+    url: jdbc:postgresql://donation-db:5432/donation
+    username: ace
+    password: charitan
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://eureka-server:8761/eureka}
+    initial-instance-info-replication-interval-seconds: 40
+  instance:
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    prefer-ip-address: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
