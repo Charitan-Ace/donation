@@ -1,4 +1,4 @@
-package ace.charitan.donation.controller;
+package ace.charitan.donation.internal.controller;
 
 import ace.charitan.donation.internal.dto.DonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
