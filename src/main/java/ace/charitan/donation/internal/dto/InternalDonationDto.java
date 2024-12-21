@@ -10,6 +10,4 @@ public interface InternalDonationDto {
     Float getAmount();
     String getMessage();
     String getTransactionStripeId();
-    Long getProjectId();
-    Long getDonorId();
 }

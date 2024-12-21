@@ -1,6 +1,5 @@
 package ace.charitan.donation.internal.service;
 
-import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "donation")
-class Donation implements InternalDonationDto, ExternalDonationDto {
+class Donation implements InternalDonationDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
