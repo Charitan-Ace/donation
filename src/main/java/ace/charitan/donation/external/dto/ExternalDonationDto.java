@@ -1,8 +1,6 @@
-package ace.charitan.donation.internal.dto;
+package ace.charitan.donation.external.dto;
 
-
-public interface InternalDonationDto {
-    Long getId();
+public interface ExternalDonationDto {
     String getFirstName();
     String getLastName();
     String getAddress();

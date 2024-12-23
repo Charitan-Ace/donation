@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DonationResponseDto {
+public class CreateDonationRequestDto {
     private String firstName;
     private String lastName;
     private String address;
@@ -15,6 +15,6 @@ public class DonationResponseDto {
     private Float amount;
     private String message;
     private String transactionStripeId;
-    private Integer projectId;
-    private Integer donorId;
+    private Long projectId;
+    private Long donorId;
 }

@@ -1,10 +1,6 @@
 spring:
   application:
     name: donation
-  datasource:
-    url: jdbc:postgresql://donation-db:5432/donation
-    username: ace
-    password: charitan
   jpa:
     hibernate:
       ddl-auto: update

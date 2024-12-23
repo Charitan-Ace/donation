@@ -1,7 +1,7 @@
 package ace.charitan.donation.internal.service;
 
 import ace.charitan.donation.external.service.ExternalDonationService;
-import ace.charitan.donation.internal.dto.DonationRequestDto;
+import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     private KafkaMessageProducer producer;
 
     @Override
-    public Donation createDonation(DonationRequestDto dto) {
+    public Donation createDonation(CreateDonationRequestDto dto) {
         Donation donation = new Donation();
         donation.setFirstName(dto.getFirstName());
         donation.setLastName(dto.getLastName());
@@ -27,13 +27,16 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         donation.setEmail(dto.getEmail());
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
+//        TODO: UPDATE THE PROJECT, DONOR and STRIPE ID
         donation.setTransactionStripeId(dto.getTransactionStripeId());
         donation.setProjectId(dto.getProjectId());
         donation.setDonorId(dto.getDonorId());
 
-        producer.sendMessage("payment-test", "5 dollars from Jeff");
+        Donation savedDonation = repository.save(donation);
 
-        return repository.save(donation);
+        producer.sendDonationNotification(savedDonation);
+
+        return savedDonation;
     }
 
     @Override
@@ -49,7 +52,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Donation updateDonation(Long id, DonationRequestDto dto) {
+    public Donation updateDonation(Long id, CreateDonationRequestDto dto) {
         Donation donation = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
 
@@ -70,15 +73,6 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         }
         if (dto.getMessage() != null) {
             donation.setMessage(dto.getMessage());
-        }
-        if (dto.getTransactionStripeId() != null) {
-            donation.setTransactionStripeId(dto.getTransactionStripeId());
-        }
-        if (dto.getProjectId() != null) {
-            donation.setProjectId(dto.getProjectId());
-        }
-        if (dto.getDonorId() != null) {
-            donation.setDonorId(dto.getDonorId());
         }
 
         return repository.save(donation);
