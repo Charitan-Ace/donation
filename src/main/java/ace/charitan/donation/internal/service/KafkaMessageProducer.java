@@ -1,8 +1,6 @@
 package ace.charitan.donation.internal.service;
 
-import ace.charitan.donation.external.dto.ExternalDonationDto;
-import ace.charitan.donation.internal.dto.InternalDonationDto;
-import ace.charitan.donation.internal.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.TestKafkaMessageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
