@@ -3,6 +3,7 @@ package ace.charitan.donation.internal.service;
 import ace.charitan.donation.external.service.ExternalDonationService;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
+import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +28,6 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         donation.setEmail(dto.getEmail());
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
-//        TODO: UPDATE THE PROJECT, DONOR and STRIPE ID
-        donation.setTransactionStripeId(dto.getTransactionStripeId());
         donation.setProjectId(dto.getProjectId());
         donation.setDonorId(dto.getDonorId());
 
@@ -52,7 +51,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Donation updateDonation(Long id, CreateDonationRequestDto dto) {
+    public Donation updateDonation(Long id, UpdateDonationRequestDto dto) {
         Donation donation = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
 
@@ -73,6 +72,10 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         }
         if (dto.getMessage() != null) {
             donation.setMessage(dto.getMessage());
+        }
+
+        if (dto.getTransactionStripeId() != null) {
+            donation.setTransactionStripeId(dto.getTransactionStripeId());
         }
 
         return repository.save(donation);

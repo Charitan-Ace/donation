@@ -11,9 +11,15 @@ class KafkaMessageConsumer {
     @Autowired
     private ExternalDonationService service;
 
-    @KafkaListener(topics = "donation-test", groupId = "donation")
-    public void listen(String message) {
+    @KafkaListener(topics = "donation-notification-response", groupId = "donation")
+    public void handleDonationNotificationResponse(String message) {
         System.out.println("Donation microservice received message: " + message);
     }
+
+    @KafkaListener(topics = "donation-payment-response", groupId = "donation")
+    public void handleDonationPaymentResponse(String message) {
+        System.out.println("Donation microservice received message: " + message);
+    }
+
 
 }

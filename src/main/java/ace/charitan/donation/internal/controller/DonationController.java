@@ -2,6 +2,7 @@ package ace.charitan.donation.internal.controller;
 
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
+import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import ace.charitan.donation.internal.service.InternalDonationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ class DonationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InternalDonationDto> updateDonation(
-            @PathVariable Long id, @RequestBody CreateDonationRequestDto dto) {
+            @PathVariable Long id, @RequestBody UpdateDonationRequestDto dto) {
         InternalDonationDto updatedDonation = service.updateDonation(id, dto);
         return ResponseEntity.ok(updatedDonation);
     }

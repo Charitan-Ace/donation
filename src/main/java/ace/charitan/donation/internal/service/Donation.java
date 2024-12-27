@@ -39,7 +39,7 @@ class Donation implements InternalDonationDto, ExternalDonationDto {
     @Column(length = 250)
     private String message;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String transactionStripeId;
 
     @Column(nullable = false)
