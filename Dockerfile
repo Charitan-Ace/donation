@@ -5,6 +5,8 @@ FROM maven:3.9-amazoncorretto-23-alpine AS build
 RUN mkdir -p /root/.m2 && mkdir /root/.m2/repository
 COPY settings.xml /root/.m2
 
+VOLUME /root/.m2
+
 COPY . /tmp/app
 WORKDIR /tmp/app
 
@@ -18,8 +20,8 @@ RUN --mount=type=secret,id=GITHUB_USERNAME,env=GITHUB_USERNAME,required=true \
 RUN mkdir -p /tmp/extracted && java -Djarmode=layertools -jar target/*jar extract --destination /tmp/extracted
 
 ## DISTROLESS IMAGE ##
-# FROM gcr.io/distroless/java21-debian12:nonroot
-FROM amazoncorretto:23-headless
+FROM gcr.io/distroless/java21-debian12:nonroot
+#FROM amazoncorretto:23-headless
 WORKDIR /tmp/app
 
 COPY --from=build /tmp/extracted/dependencies /tmp/app/
