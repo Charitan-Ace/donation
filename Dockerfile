@@ -1,27 +1,31 @@
 ## BUILD STAGE ##
-FROM maven:3.9-amazoncorretto-23-alpine AS build
-
-# create and copy maven settings, including repository & github credentials env settings
-RUN mkdir -p /root/.m2 && mkdir /root/.m2/repository
-COPY settings.xml /root/.m2
-
-VOLUME /root/.m2
-
-COPY . /tmp/app
+FROM maven:3.9-amazoncorretto-21-alpine AS build
 WORKDIR /tmp/app
+
+# copy outside cache
+COPY settings.xml /
+
+# download and cache dependencies
+COPY ./pom.xml /tmp/app
+RUN --mount=type=secret,id=GITHUB_USERNAME,env=GITHUB_USERNAME,required=true \
+    --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN,required=true \
+    --mount=type=cache,target=/root/.m2 \
+    cp /settings.xml /root/.m2 && \
+    mvn dependency:go-offline
+
+# build the app
+COPY . /tmp/app
 
 # token are mount as Docker secret mounts, see: https://docs.docker.com/reference/dockerfile/#run---mounttypesecret
 # application following nixpacks build command, see: https://nixpacks.com/docs/providers/java
-RUN --mount=type=secret,id=GITHUB_USERNAME,env=GITHUB_USERNAME,required=true \
-    --mount=type=secret,id=GITHUB_TOKEN,env=GITHUB_TOKEN,required=true \
-    mvn -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
+RUN     --mount=type=cache,target=/root/.m2 \
+    mvn -DoutputFile=target/mvn-dependency-list.log -B -DskipTests install
 
 # use layertools for build cache
 RUN mkdir -p /tmp/extracted && java -Djarmode=layertools -jar target/*jar extract --destination /tmp/extracted
 
 ## DISTROLESS IMAGE ##
 FROM gcr.io/distroless/java21-debian12:nonroot
-#FROM amazoncorretto:23-headless
 WORKDIR /tmp/app
 
 COPY --from=build /tmp/extracted/dependencies /tmp/app/
