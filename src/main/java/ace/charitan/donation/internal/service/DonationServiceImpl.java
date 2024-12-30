@@ -1,5 +1,6 @@
 package ace.charitan.donation.internal.service;
 
+import ace.charitan.common.dto.TestKafkaMessageDto;
 import ace.charitan.donation.external.service.ExternalDonationService;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.ExecutionException;
 
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
@@ -20,7 +23,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     private KafkaMessageProducer producer;
 
     @Override
-    public Donation createDonation(CreateDonationRequestDto dto) {
+    public Donation createDonation(CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
         Donation donation = new Donation();
         donation.setFirstName(dto.getFirstName());
         donation.setLastName(dto.getLastName());
@@ -34,6 +37,8 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         Donation savedDonation = repository.save(donation);
 
         producer.sendDonationNotification(savedDonation);
+        TestKafkaMessageDto response = producer.testRequestResponse();
+        System.out.println(response);
 
         return savedDonation;
     }

@@ -9,13 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 @RestController
 class DonationController {
     @Autowired
     private InternalDonationService service;
 
     @PostMapping
-    public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) {
+    public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
         InternalDonationDto donation = service.createDonation(dto);
         return ResponseEntity.status(201).body(donation);
     }
