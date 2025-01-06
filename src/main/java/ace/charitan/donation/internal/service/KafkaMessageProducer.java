@@ -24,16 +24,6 @@ class KafkaMessageProducer {
     private ReplyingKafkaTemplate<String, Object, Object> replyingKafkaTemplate;
 
 
-//    public void sendMessage(String topic, String message) {
-//        System.out.println("Project microservice sent message: " + message);
-//        kafkaTemplate.send(topic, message);
-//    }
-
-    public void sendDonationNotification(Donation donation) {
-        TestKafkaMessageDto dto = new TestKafkaMessageDto(donation.getFirstName(), donation.getMessage());
-        kafkaTemplate.send("donation-notification", dto);
-    }
-
     public TestKafkaMessageDto testRequestResponse() throws ExecutionException, InterruptedException {
         TestKafkaMessageDto dto = new TestKafkaMessageDto("John Request", "Requesting a response from notification");
         ProducerRecord<String, Object> record = new ProducerRecord<>("john-request", dto);

@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
+    // TODO: THIS IS THE TEST USER ID. REMOVE WHEN ABLE TO EXTRACT FROM JWT
+    private final String userId = "123";
 
     @Autowired
     private DonationRepository repository;
@@ -25,10 +27,6 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     @Override
     public Donation createDonation(CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
         Donation donation = new Donation();
-        donation.setFirstName(dto.getFirstName());
-        donation.setLastName(dto.getLastName());
-        donation.setAddress(dto.getAddress());
-        donation.setEmail(dto.getEmail());
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
         donation.setProjectId(dto.getProjectId());
@@ -36,7 +34,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         Donation savedDonation = repository.save(donation);
 
-        producer.sendDonationNotification(savedDonation);
+//        producer.sendDonationNotification(savedDonation);
         TestKafkaMessageDto response = producer.testRequestResponse();
         System.out.println(response);
 
@@ -60,18 +58,6 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         Donation donation = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
 
-        if (dto.getFirstName() != null) {
-            donation.setFirstName(dto.getFirstName());
-        }
-        if (dto.getLastName() != null) {
-            donation.setLastName(dto.getLastName());
-        }
-        if (dto.getAddress() != null) {
-            donation.setAddress(dto.getAddress());
-        }
-        if (dto.getEmail() != null) {
-            donation.setEmail(dto.getEmail());
-        }
         if (dto.getAmount() != null) {
             donation.setAmount(dto.getAmount());
         }

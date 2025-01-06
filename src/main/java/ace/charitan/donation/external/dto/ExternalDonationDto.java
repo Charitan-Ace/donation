@@ -1,10 +1,7 @@
 package ace.charitan.donation.external.dto;
 
 public interface ExternalDonationDto {
-    String getFirstName();
-    String getLastName();
-    String getAddress();
-    String getEmail();
+    Long getId();
     Float getAmount();
     String getMessage();
 }
