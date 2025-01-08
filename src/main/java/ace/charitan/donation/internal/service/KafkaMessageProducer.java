@@ -1,6 +1,8 @@
 package ace.charitan.donation.internal.service;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.donation.SendDonationNotificationDto;
+import ace.charitan.donation.internal.dto.InternalDonationDto;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -10,6 +12,7 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.concurrent.ExecutionException;
 
 import static org.springframework.kafka.support.KafkaHeaders.REPLY_TOPIC;
@@ -35,6 +38,12 @@ class KafkaMessageProducer {
         System.out.println("Object" + response);
 
         return (TestKafkaMessageDto) response ;
+    }
+
+    public void sendDonationNotification(InternalDonationDto dto) {
+        SendDonationNotificationDto newDto = new SendDonationNotificationDto(1L, 10.00F, "abc", "xyz", "bucky", LocalDate.now());
+        kafkaTemplate.send("donation-notification",newDto);
+        kafkaTemplate.send("donation-email", newDto);
     }
 
 }

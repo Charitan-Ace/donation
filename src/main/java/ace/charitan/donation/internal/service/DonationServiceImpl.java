@@ -34,9 +34,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         Donation savedDonation = repository.save(donation);
 
-//        producer.sendDonationNotification(savedDonation);
-        TestKafkaMessageDto response = producer.testRequestResponse();
-        System.out.println(response);
+        producer.sendDonationNotification(savedDonation);
 
         return savedDonation;
     }

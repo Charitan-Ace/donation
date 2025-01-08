@@ -18,6 +18,7 @@ class DonationController {
 
     @PostMapping
     public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
+        System.out.println();
         InternalDonationDto donation = service.createDonation(dto);
         return ResponseEntity.status(201).body(donation);
     }
