@@ -6,4 +6,5 @@ import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 
 public interface ExternalDonationService {
     ExternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto);
+    ExternalDonationDto getDonationById(Long id);
 }
