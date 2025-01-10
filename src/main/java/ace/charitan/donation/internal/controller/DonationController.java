@@ -37,6 +37,12 @@ class DonationController {
         return ResponseEntity.ok(donations);
     }
 
+    @GetMapping("/project-total-amount")
+    public ResponseEntity<Double> getProjectDonationAmount(@RequestParam(name = "projectId") String projectId) {
+        Double totalAmount = service.getDonationProjectDonationAmount(projectId);
+        return ResponseEntity.ok(totalAmount);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<InternalDonationDto> updateDonation(
             @PathVariable Long id, @RequestBody UpdateDonationRequestDto dto) {

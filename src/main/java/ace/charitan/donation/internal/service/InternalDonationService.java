@@ -13,4 +13,5 @@ public interface InternalDonationService {
     Page<InternalDonationDto> getAllDonations(int page, int limit);
     InternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto);
     void deleteDonation(Long id);
+    Double getDonationProjectDonationAmount(String projectId);
 }

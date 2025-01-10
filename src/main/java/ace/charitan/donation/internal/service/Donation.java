@@ -23,7 +23,7 @@ class Donation implements InternalDonationDto, ExternalDonationDto {
     private Long id;
 
     @Column(nullable = false)
-    private Float amount;
+    private Double amount;
 
     @Column(length = 250)
     private String message;
@@ -32,10 +32,10 @@ class Donation implements InternalDonationDto, ExternalDonationDto {
     private String transactionStripeId;
 
     @Column(nullable = false)
-    private Long projectId;
+    private String projectId;
 
     @Column(nullable = false)
-    private Long donorId;
+    private String donorId;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

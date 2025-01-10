@@ -11,12 +11,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
-    // TODO: THIS IS THE TEST USER ID. REMOVE WHEN ABLE TO EXTRACT FROM JWT
-    private final String userId = "123";
 
     @Autowired
     private DonationRepository repository;
@@ -26,11 +25,12 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
     @Override
     public Donation createDonation(CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
+        String donorId = getDonorIdFromUserId();
         Donation donation = new Donation();
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
         donation.setProjectId(dto.getProjectId());
-        donation.setDonorId(dto.getDonorId());
+        donation.setDonorId(donorId);
 
         Donation savedDonation = repository.save(donation);
 
@@ -70,10 +70,23 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         return repository.save(donation);
     }
 
+
     @Override
     public void deleteDonation(Long id) {
         Donation donation = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
         repository.delete(donation);
+    }
+
+    @Override
+    public Double getDonationProjectDonationAmount(String projectId) {
+        List<Donation> projectDonations = repository.getAllByProjectId(projectId);
+        return projectDonations.stream()
+                .map(Donation::getAmount)
+                .reduce(0.0, Double::sum);
+    }
+
+    private String getDonorIdFromUserId() {
+        return "abc";
     }
 }

@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateDonationRequestDto {
-    private Float amount;
+    private Double amount;
     private String message;
-    private Long projectId;
-    private Long donorId;
+    private String projectId;
 }

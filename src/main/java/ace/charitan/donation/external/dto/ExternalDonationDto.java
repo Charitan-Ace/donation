@@ -2,6 +2,6 @@ package ace.charitan.donation.external.dto;
 
 public interface ExternalDonationDto {
     Long getId();
-    Float getAmount();
+    Double getAmount();
     String getMessage();
 }

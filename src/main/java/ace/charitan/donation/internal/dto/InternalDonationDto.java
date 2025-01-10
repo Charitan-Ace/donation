@@ -3,6 +3,6 @@ package ace.charitan.donation.internal.dto;
 
 public interface InternalDonationDto {
     Long getId();
-    Float getAmount();
+    Double getAmount();
     String getMessage();
 }
