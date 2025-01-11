@@ -99,7 +99,7 @@
         <dependency>
             <groupId>ace.charitan</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.56-SNAPSHOT</version>
+            <version>0.0.58-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

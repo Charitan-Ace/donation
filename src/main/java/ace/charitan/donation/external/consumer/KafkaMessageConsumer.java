@@ -76,5 +76,19 @@ class KafkaMessageConsumer {
         return new GetDonationStatisticsResponseDto(charityDonationStatistics);
     }
 
+    @KafkaListener(topics = "donors-of-the-month")
+    @SendTo
+    public GetDonorsOfTheMonthResponseDto handleGetDonorsOfTheMonth() {
+        Map<String, Double> donorsAndAmount = service.getDonorsOfTheMonth();
+        return new GetDonorsOfTheMonthResponseDto(donorsAndAmount);
+    }
+
+    @KafkaListener(topics = "charity-donors-of-the-month")
+    @SendTo
+    public GetDonorsOfTheMonthResponseDto handleGetCharityDonorsOfTheMonth(GetCharityDonorsOfTheMonthRequestDto dto) {
+        Map<String, Double> donorsAndAmount = service.getCharityDonorsOfTheMonth(dto.getWrapper().getProjectIds());
+        return new GetDonorsOfTheMonthResponseDto(donorsAndAmount);
+    }
+
 
 }
