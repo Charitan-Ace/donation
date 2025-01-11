@@ -1,11 +1,10 @@
 package ace.charitan.donation.internal.service;
 
-import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.external.service.ExternalDonationService;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +15,16 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
+    final private DonationRepository repository;
+    final private KafkaMessageProducer producer;
 
-    @Autowired
-    private DonationRepository repository;
-
-    @Autowired
-    private KafkaMessageProducer producer;
+    private DonationServiceImpl(
+            DonationRepository repository,
+            KafkaMessageProducer producer
+    ) {
+        this.repository = repository;
+        this.producer = producer;
+    }
 
     @Override
     public Donation createDonation(CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
@@ -43,6 +46,12 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     public Donation getDonationById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
+    }
+
+    @Override
+    public List<ExternalDonationDto> getDonationByProjectId(String projectId) {
+        return repository.findAllByProjectId(projectId)
+                .stream().map(model -> (ExternalDonationDto) model).toList();
     }
 
     @Override

@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 interface DonationRepository extends JpaRepository<Donation, Long> {
     List<Donation> getAllByProjectId(String projectId);
+
+    List<Donation> findAllByProjectId(String projectId);
 }
