@@ -17,7 +17,7 @@ class DonationController {
     private InternalDonationService service;
 
     @PostMapping
-    public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws ExecutionException, InterruptedException {
+    public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
         System.out.println();
         InternalDonationDto donation = service.createDonation(dto);
         return ResponseEntity.status(201).body(donation);
@@ -34,6 +34,14 @@ class DonationController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) {
         Page<InternalDonationDto> donations = service.getAllDonations(page, limit);
+        return ResponseEntity.ok(donations);
+    }
+
+    @GetMapping("/my-donations")
+    public ResponseEntity<Page<InternalDonationDto>> getAllUserDonations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit) throws Exception {
+        Page<InternalDonationDto> donations = service.getDonationsByUserId(page, limit);
         return ResponseEntity.ok(donations);
     }
 

@@ -42,7 +42,7 @@ class KafkaMessageConsumer {
     }
 
     @KafkaListener(topics = "create-monthly-donation", groupId = "donation")
-    public void handleCreateMonthlyDonation(CreateMonthlyDonationDto dto) throws ExecutionException, InterruptedException {
+    public void handleCreateMonthlyDonation(CreateMonthlyDonationDto dto) throws Exception {
         CreateDonationRequestDto newDto = new CreateDonationRequestDto(dto.getAmount(), dto.getMessage(), dto.getDonorId(), dto.getProjectId(), dto.getTransactionStripeId());
         service.createDonation(newDto);
     }
@@ -59,4 +59,6 @@ class KafkaMessageConsumer {
                 )).toList()
         );
     }
+
+
 }
