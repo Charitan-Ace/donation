@@ -43,3 +43,5 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+server:
+  port: 0
