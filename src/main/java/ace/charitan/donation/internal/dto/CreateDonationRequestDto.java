@@ -11,4 +11,6 @@ public class CreateDonationRequestDto {
     private Double amount;
     private String message;
     private String projectId;
+    private String donorId;
+    private String transactionStripeId;
 }

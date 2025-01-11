@@ -41,7 +41,7 @@ class KafkaMessageProducer {
     }
 
     public void sendDonationNotification(InternalDonationDto dto) {
-        SendDonationNotificationDto newDto = new SendDonationNotificationDto(1L, 10.00, "abc", "xyz", "bucky", LocalDate.now());
+        SendDonationNotificationDto newDto = new SendDonationNotificationDto(dto.getId(), dto.getAmount(), dto.getMessage(), "skibidi", "toilet", LocalDate.now());
         kafkaTemplate.send("donation-notification",newDto);
         kafkaTemplate.send("donation-email", newDto);
     }
