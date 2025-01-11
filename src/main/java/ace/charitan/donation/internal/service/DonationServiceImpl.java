@@ -43,8 +43,12 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
             throw new Exception("Cannot get auth model");
         }
 
-        String userId = authModel.getUsername();
-        donation.setDonorId(userId);
+        if (dto.getDonorId() != null) {
+            donation.setDonorId(dto.getDonorId());
+        } else {
+            String userId = authModel.getUsername();
+            donation.setDonorId(userId);
+        }
 
         Donation savedDonation = repository.save(donation);
 
