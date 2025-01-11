@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -18,7 +20,6 @@ class DonationController {
 
     @PostMapping
     public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
-        System.out.println();
         InternalDonationDto donation = service.createDonation(dto);
         return ResponseEntity.status(201).body(donation);
     }
@@ -47,7 +48,7 @@ class DonationController {
 
     @GetMapping("/project-total-amount")
     public ResponseEntity<Double> getProjectDonationAmount(@RequestParam(name = "projectId") String projectId) {
-        Double totalAmount = service.getDonationProjectDonationAmount(projectId);
+        Double totalAmount = service.getProjectDonationAmount(projectId);
         return ResponseEntity.ok(totalAmount);
     }
 
@@ -61,6 +62,17 @@ class DonationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDonation(@PathVariable Long id) {
         service.deleteDonation(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<Void> test() {
+        Map<String, Double> charity = service.getCharityDonationStatistics(List.of("123", "abc"));
+        Map<String, Double> donor = service.getDonorDonationStatistics("1a2c6825-4a84-4d38-8c50-c65c0f01c83a");
+
+        System.out.println(charity);
+        System.out.println();
+        System.out.println(donor);
         return ResponseEntity.noContent().build();
     }
 }

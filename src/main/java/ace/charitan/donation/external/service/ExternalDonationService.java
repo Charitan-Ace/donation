@@ -15,5 +15,6 @@ public interface ExternalDonationService {
     ExternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto);
     ExternalDonationDto getDonationById(Long id);
     List<ExternalDonationDto> getDonationByProjectId(String projectId);
-    Map<String, Double> getDonorTotalProjectAndValue(String donorId);
+    Map<String, Double> getCharityDonationStatistics(List<String> projectIds);
+    Map<String, Double> getDonorDonationStatistics(String donorId);
 }

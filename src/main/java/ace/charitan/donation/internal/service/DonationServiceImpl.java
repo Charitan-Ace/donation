@@ -111,7 +111,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Double getDonationProjectDonationAmount(String projectId) {
+    public Double getProjectDonationAmount(String projectId) {
         List<Donation> projectDonations = repository.findAllByProjectId(projectId);
         return projectDonations.stream()
                 .map(Donation::getAmount)
@@ -119,7 +119,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Map<String, Double> getDonorTotalProjectAndValue(String donorId) {
+    public Map<String, Double> getDonorDonationStatistics(String donorId) {
         List<Donation> donorDonations = repository.findAllByDonorId(donorId);
 
        Map<String, Double> projectDonationTotals = new HashMap<>();
@@ -135,7 +135,23 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         }
 
         return projectDonationTotals;
+    }
 
+    public Map<String, Double> getCharityDonationStatistics(List<String> projectIds) {
+        Map<String, Double> projectDonationTotals = new HashMap<>();
+
+        for (String projectId: projectIds) {
+            List<Donation> projectDonations = repository.findAllByProjectId(projectId);
+            for (Donation donation: projectDonations) {
+                if (donation.getProjectId().equals(projectId)) {
+                    Double amount = donation.getAmount();
+
+                    projectDonationTotals.put(projectId,
+                            projectDonationTotals.getOrDefault(projectId, 0.0) + amount);
+                }
+            }
+        }
+        return projectDonationTotals;
     }
 
 }
