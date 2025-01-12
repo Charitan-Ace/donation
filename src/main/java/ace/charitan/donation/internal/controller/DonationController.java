@@ -1,17 +1,21 @@
 package ace.charitan.donation.internal.controller;
 
+import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import ace.charitan.donation.internal.service.InternalDonationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 class DonationController {
@@ -19,6 +23,7 @@ class DonationController {
     private InternalDonationService service;
 
     @PostMapping
+
     public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
         InternalDonationDto donation = service.createDonation(dto);
         return ResponseEntity.status(201).body(donation);
@@ -65,6 +70,14 @@ class DonationController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PostMapping("/test/project/{charityId}")
+    public ResponseEntity<List<ExternalProjectDto>> getProjectListByCharityId(@PathVariable String charityId) {
+        List<ExternalProjectDto> projectDtoList = service.getProjectListByCharityId(charityId);
+        return new ResponseEntity<>(projectDtoList, HttpStatus.OK);
+    }
+
+
     @GetMapping("/test")
     public ResponseEntity<Void> test() {
         Map<String, Double> charity = service.getCharityDonationStatistics(List.of("123", "abc"));
@@ -75,4 +88,5 @@ class DonationController {
         System.out.println(donor);
         return ResponseEntity.noContent().build();
     }
+
 }
