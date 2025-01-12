@@ -1,6 +1,18 @@
 package ace.charitan.donation.internal.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
 import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.external.service.ExternalDonationService;
 import ace.charitan.donation.internal.auth.AuthModel;
@@ -8,16 +20,6 @@ import ace.charitan.donation.internal.auth.AuthUtils;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
@@ -26,8 +28,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
     private DonationServiceImpl(
             DonationRepository repository,
-            KafkaMessageProducer producer
-    ) {
+            KafkaMessageProducer producer) {
         this.repository = repository;
         this.producer = producer;
     }
@@ -103,7 +104,6 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         return repository.save(donation);
     }
 
-
     @Override
     public void deleteDonation(Long id) {
         Donation donation = repository.findById(id)
@@ -123,9 +123,9 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     public Map<String, Double> getDonorTotalProjectAndValue(String donorId) {
         List<Donation> donorDonations = repository.findAllByDonorId(donorId);
 
-       Map<String, Double> projectDonationTotals = new HashMap<>();
+        Map<String, Double> projectDonationTotals = new HashMap<>();
 
-        for (Donation donation: donorDonations) {
+        for (Donation donation : donorDonations) {
             if (donation.getDonorId().equals(donorId)) {
                 String projectId = donation.getProjectId();
                 Double amount = donation.getAmount();
@@ -141,7 +141,9 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
     @Override
     public List<ExternalProjectDto> getProjectListByCharityId(String charityId) {
-        producer.
+        GetProjectByCharityIdResponseDto responseDto = producer
+                .sendAndReceive(new GetProjectByCharityIdRequestDto(charityId, new ArrayList<>()));
+        return responseDto.getProjectDtoList();
     }
 
 }
