@@ -2,6 +2,7 @@ package ace.charitan.donation.internal.controller;
 
 import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
+import ace.charitan.donation.internal.dto.CreateDonationResponseDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import ace.charitan.donation.internal.service.InternalDonationService;
@@ -23,10 +24,9 @@ class DonationController {
     private InternalDonationService service;
 
     @PostMapping
-
-    public ResponseEntity<InternalDonationDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
-        InternalDonationDto donation = service.createDonation(dto);
-        return ResponseEntity.status(201).body(donation);
+    public ResponseEntity<CreateDonationResponseDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
+        CreateDonationResponseDto response = service.createDonation(dto);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/{id}")

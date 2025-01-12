@@ -2,6 +2,8 @@ package ace.charitan.donation.internal.service;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
 import ace.charitan.common.dto.donation.SendDonationNotificationDto;
+import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlRequestDto;
+import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlResponseDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
@@ -66,6 +68,15 @@ class KafkaMessageProducer {
                 dto.getMessage(), "skibidi", "toilet", LocalDate.now());
         kafkaTemplate.send("donation-notification", newDto);
         kafkaTemplate.send("donation-email", newDto);
+    }
+
+    public CreateDonationPaymentRedirectUrlResponseDto createPaymentRedirectUrl(CreateDonationPaymentRedirectUrlRequestDto dto) throws ExecutionException, InterruptedException {
+        ProducerRecord<String, Object> record = new ProducerRecord<>(DonationProducerTopic.PAYMENT_CREATE_PAYMENT_REDIRECT_URL.getTopic(), dto);
+        record.headers().add(REPLY_TOPIC, REPLY_TOPIC.getBytes());
+        RequestReplyFuture<String, Object, Object> future = replyingKafkaTemplate.sendAndReceive(record);
+
+        return (CreateDonationPaymentRedirectUrlResponseDto) future.get().value();
+
     }
 
     GetProjectByCharityIdResponseDto sendAndReceive(GetProjectByCharityIdRequestDto requestDto) {

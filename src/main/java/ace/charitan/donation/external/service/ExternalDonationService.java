@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 public interface ExternalDonationService {
-    ExternalDonationDto createDonation(CreateDonationRequestDto dto) throws Exception;
+    void createMonthlyDonation(Double amount, String message, String transactionStripeId, String projectId, String donorId);
     ExternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto);
     ExternalDonationDto getDonationById(Long id);
     List<ExternalDonationDto> getDonationByProjectId(String projectId);

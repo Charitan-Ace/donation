@@ -2,6 +2,7 @@ package ace.charitan.donation.internal.service;
 
 import java.util.List;
 
+import ace.charitan.donation.internal.dto.CreateDonationResponseDto;
 import org.springframework.data.domain.Page;
 
 import ace.charitan.common.dto.project.ExternalProjectDto;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 
 public interface InternalDonationService {
-    InternalDonationDto createDonation(CreateDonationRequestDto dto) throws Exception;
+    CreateDonationResponseDto createDonation(CreateDonationRequestDto dto) throws Exception;
 
     InternalDonationDto getDonationById(Long id);
 

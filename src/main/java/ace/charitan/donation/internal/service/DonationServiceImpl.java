@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlRequestDto;
+import ace.charitan.donation.internal.dto.CreateDonationResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +24,8 @@ import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 
 import ace.charitan.donation.internal.utils.DateUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 
 @Service
@@ -45,30 +41,40 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Donation createDonation(CreateDonationRequestDto dto) throws Exception {
-        //TODO: HANDLE DONATE AS GUEST
+    public CreateDonationResponseDto createDonation(CreateDonationRequestDto dto) throws Exception {
         Donation donation = new Donation();
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
         donation.setProjectId(dto.getProjectId());
 
         AuthModel authModel = AuthUtils.getUserDetails();
-        if (authModel == null) {
-            throw new Exception("Cannot get auth model");
-        }
 
-        if (dto.getDonorId() != null) {
-            donation.setDonorId(dto.getDonorId());
-        } else {
+        if (authModel != null) {
+            //HANDLE ONE TIME DONATION
             String userId = authModel.getUsername();
+            donation.setDonorId(userId);
+        } else {
+            //TODO: HANDLE ONE TIME DONATION FOR GUEST
+            String userId = "abcxyz";
             donation.setDonorId(userId);
         }
 
         Donation savedDonation = repository.save(donation);
 
+        String redirectUrl = producer.createPaymentRedirectUrl(new CreateDonationPaymentRedirectUrlRequestDto(savedDonation.getId(), savedDonation.getAmount(), dto.getSuccessUrl(), dto.getCancelUrl())).getRedirectUrl();
+
         producer.sendDonationNotification(savedDonation);
 
-        return savedDonation;
+        return new CreateDonationResponseDto(savedDonation.getId(), savedDonation.getAmount(), savedDonation.getMessage(), savedDonation.getTransactionStripeId(), savedDonation.getProjectId(), savedDonation.getDonorId(), savedDonation.getCreatedAt(), redirectUrl);
+    }
+
+    @Override
+    public void createMonthlyDonation(Double amount, String message, String transactionStripeId, String projectId, String donorId) {
+        Donation donation = new Donation(null, amount, message, transactionStripeId, projectId, donorId, null);
+
+        Donation savedDonation = repository.save(donation);
+        producer.sendDonationNotification(savedDonation);
+
     }
 
     @Override

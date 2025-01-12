@@ -4,18 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateDonationRequestDto {
-    private Double amount;
-    private String message;
-    private String projectId;
-    private String successUrl;
-    private String cancelUrl;
+public class CreateDonationResponseDto {
+    private Long id;
 
-    //For guest
-    private String email;
-    private String firstName;
-    private String lastName;
+    private Double amount;
+
+    private String message;
+
+    private String transactionStripeId;
+
+    private String projectId;
+
+    private String donorId;
+
+    private LocalDate createdAt;
+
+    private String redirectUrl;
 }

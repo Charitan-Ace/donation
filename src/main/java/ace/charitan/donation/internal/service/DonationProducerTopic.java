@@ -12,7 +12,8 @@ enum DonationProducerTopic {
     // PROJECT_SUBSCRIPTION_GET_MEDIA_BY_PROJECT_ID("project-media-get-media-by-project-id");
     // PROJECT_SUBSCRIPTION_NEW_PROJECT("project-subscription-new-project");
 
-    PROJECT_GET_ALL_PROJECTS_BY_CHARITY_ID("project.get-all-projects-by-charitan-id");
+    PROJECT_GET_ALL_PROJECTS_BY_CHARITY_ID("project.get-all-projects-by-charitan-id"),
+    PAYMENT_CREATE_PAYMENT_REDIRECT_URL("payment.create-payment-redirect-url");
 
     private final String topic;
 

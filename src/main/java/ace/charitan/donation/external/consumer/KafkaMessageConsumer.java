@@ -43,8 +43,7 @@ class KafkaMessageConsumer {
 
     @KafkaListener(topics = "create-monthly-donation", groupId = "donation")
     public void handleCreateMonthlyDonation(CreateMonthlyDonationDto dto) throws Exception {
-        CreateDonationRequestDto newDto = new CreateDonationRequestDto(dto.getAmount(), dto.getMessage(), dto.getDonorId(), dto.getProjectId(), dto.getTransactionStripeId());
-        service.createDonation(newDto);
+        service.createMonthlyDonation(dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(), dto.getProjectId(), dto.getDonorId());
     }
 
     @KafkaListener(topics = "donation.get.projectId")
