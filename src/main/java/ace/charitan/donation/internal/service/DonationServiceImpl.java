@@ -21,6 +21,17 @@ import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 
+import ace.charitan.donation.internal.utils.DateUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+
+
 @Service
 class DonationServiceImpl implements InternalDonationService, ExternalDonationService {
     final private DonationRepository repository;
@@ -35,6 +46,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
     @Override
     public Donation createDonation(CreateDonationRequestDto dto) throws Exception {
+        //TODO: HANDLE DONATE AS GUEST
         Donation donation = new Donation();
         donation.setAmount(dto.getAmount());
         donation.setMessage(dto.getMessage());
@@ -45,8 +57,12 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
             throw new Exception("Cannot get auth model");
         }
 
-        String userId = authModel.getUsername();
-        donation.setDonorId(userId);
+        if (dto.getDonorId() != null) {
+            donation.setDonorId(dto.getDonorId());
+        } else {
+            String userId = authModel.getUsername();
+            donation.setDonorId(userId);
+        }
 
         Donation savedDonation = repository.save(donation);
 
@@ -112,7 +128,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Double getDonationProjectDonationAmount(String projectId) {
+    public Double getProjectDonationAmount(String projectId) {
         List<Donation> projectDonations = repository.findAllByProjectId(projectId);
         return projectDonations.stream()
                 .map(Donation::getAmount)
@@ -120,7 +136,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Map<String, Double> getDonorTotalProjectAndValue(String donorId) {
+    public Map<String, Double> getDonorDonationStatistics(String donorId) {
         List<Donation> donorDonations = repository.findAllByDonorId(donorId);
 
         Map<String, Double> projectDonationTotals = new HashMap<>();
@@ -136,7 +152,63 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         }
 
         return projectDonationTotals;
+    }
 
+    public Map<String, Double> getCharityDonationStatistics(List<String> projectIds) {
+        Map<String, Double> projectDonationTotals = new HashMap<>();
+
+        for (String projectId: projectIds) {
+            List<Donation> projectDonations = repository.findAllByProjectId(projectId);
+            for (Donation donation: projectDonations) {
+                if (donation.getProjectId().equals(projectId)) {
+                    Double amount = donation.getAmount();
+
+                    projectDonationTotals.put(projectId,
+                            projectDonationTotals.getOrDefault(projectId, 0.0) + amount);
+                }
+            }
+        }
+        return projectDonationTotals;
+    }
+
+    public Map<String, Double> getDonorsOfTheMonth() {
+        List<Donation> currentMonthDonations = repository.findAllByCreatedAtBetween(DateUtils.getStartOfMonth(), DateUtils.getEndOfMonth());
+
+        return getGetTopDonorsAndAmount(currentMonthDonations);
+    }
+
+    public Map<String, Double> getCharityDonorsOfTheMonth(List<String> projectIds) {
+        List<Donation> currentMonthDonations = repository.findAllByProjectIdInAndCreatedAtBetween(
+                projectIds,
+                DateUtils.getStartOfMonth(),
+                DateUtils.getEndOfMonth()
+        );
+
+        return getGetTopDonorsAndAmount(currentMonthDonations);
+    }
+
+    private Map<String, Double> getGetTopDonorsAndAmount(List<Donation> currentMonthDonations) {
+        Map<String, Double> aggregatedDonations = new HashMap<>();
+
+        for (Donation donation : currentMonthDonations) {
+            String donorId = donation.getDonorId();
+            double amount = donation.getAmount();
+
+            aggregatedDonations.put(donorId, aggregatedDonations.getOrDefault(donorId, 0.0) + amount);
+        }
+
+        List<Map.Entry<String, Double>> donationList = new ArrayList<>(aggregatedDonations.entrySet());
+
+        donationList.sort((entry1, entry2) -> Double.compare(entry2.getValue(), entry1.getValue()));
+
+        Map<String, Double> topDonors = new LinkedHashMap<>();
+
+        for (int i = 0; i < Math.min(10, donationList.size()); i++) {
+            Map.Entry<String, Double> entry = donationList.get(i);
+            topDonors.put(entry.getKey(), entry.getValue());
+        }
+
+        return topDonors;
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -58,6 +59,35 @@ class KafkaMessageConsumer {
                         dto.getId(), dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(), dto.getProjectId(), dto.getDonorId(), dto.getCreatedAt()
                 )).toList()
         );
+    }
+
+    @KafkaListener(topics = "donor-donation-statistics")
+    @SendTo
+    public GetDonationStatisticsResponseDto handleGetDonorDonationStatistics(GetDonorDonationStatisticsRequestDto dto) {
+        Map<String, Double> donorDonationStatistics = service.getDonorDonationStatistics(dto.getDonorId());
+        return new GetDonationStatisticsResponseDto(donorDonationStatistics);
+
+    }
+
+    @KafkaListener(topics = "charity-donation-statistics")
+    @SendTo
+    public GetDonationStatisticsResponseDto handleGetDonorDonationStatistics(GetCharityDonationStatisticsRequestDto dto) {
+        Map<String, Double> charityDonationStatistics = service.getCharityDonationStatistics(dto.getDto().getProjectIds());
+        return new GetDonationStatisticsResponseDto(charityDonationStatistics);
+    }
+
+    @KafkaListener(topics = "donors-of-the-month")
+    @SendTo
+    public GetDonorsOfTheMonthResponseDto handleGetDonorsOfTheMonth() {
+        Map<String, Double> donorsAndAmount = service.getDonorsOfTheMonth();
+        return new GetDonorsOfTheMonthResponseDto(donorsAndAmount);
+    }
+
+    @KafkaListener(topics = "charity-donors-of-the-month")
+    @SendTo
+    public GetDonorsOfTheMonthResponseDto handleGetCharityDonorsOfTheMonth(GetCharityDonorsOfTheMonthRequestDto dto) {
+        Map<String, Double> donorsAndAmount = service.getCharityDonorsOfTheMonth(dto.getWrapper().getProjectIds());
+        return new GetDonorsOfTheMonthResponseDto(donorsAndAmount);
     }
 
 

@@ -11,7 +11,10 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
       group-id: "donation-service"
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.DelegatingByTopicDeserializer
+      properties:
+        spring.kafka.value.serialization.bytopic.config: "key.+:org.apache.kafka.common.serialization.StringDeserializer"
+        spring.kafka.value.serialization.bytopic.default: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
       spring:
         json:
@@ -43,3 +46,5 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+server:
+  port: 0
