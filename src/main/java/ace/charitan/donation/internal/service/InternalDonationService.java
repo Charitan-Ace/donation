@@ -26,15 +26,11 @@ public interface InternalDonationService {
 
     void deleteDonation(Long id);
 
-
-    Double getDonationProjectDonationAmount(String projectId);
-
     Page<InternalDonationDto> getDonationsByUserId(int page, int limit) throws Exception;
 
     List<ExternalProjectDto> getProjectListByCharityId(String charityId);
 
     Double getProjectDonationAmount(String projectId);
-    Page<InternalDonationDto> getDonationsByUserId(int page, int limit) throws Exception;
     Map<String, Double> getCharityDonationStatistics(List<String> projectIds);
     Map<String, Double> getDonorDonationStatistics(String donorId);
 

@@ -14,6 +14,6 @@ enum DonationProducerTopic {
 
     PROJECT_GET_ALL_PROJECTS_BY_CHARITY_ID("project.get-all-projects-by-charitan-id");
 
-    private String topic;
+    private final String topic;
 
 }
