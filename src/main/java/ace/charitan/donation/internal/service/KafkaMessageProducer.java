@@ -46,4 +46,6 @@ class KafkaMessageProducer {
         kafkaTemplate.send("donation-email", newDto);
     }
 
+    
+
 }

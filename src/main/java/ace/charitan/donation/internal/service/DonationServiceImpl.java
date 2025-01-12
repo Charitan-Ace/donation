@@ -1,5 +1,6 @@
 package ace.charitan.donation.internal.service;
 
+import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.external.service.ExternalDonationService;
 import ace.charitan.donation.internal.auth.AuthModel;
@@ -136,6 +137,11 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         return projectDonationTotals;
 
+    }
+
+    @Override
+    public List<ExternalProjectDto> getProjectListByCharityId(String charityId) {
+        producer.
     }
 
 }
