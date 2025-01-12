@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 interface DonationRepository extends JpaRepository<Donation, Long> {
     List<Donation> findAllByProjectId(String projectId);
-    List<Donation> findAllByDonorId(String projectId);
+    List<Donation> findAllByDonorId(String donorId);
     Page<Donation> findAllByDonorId(String donorId, Pageable pageable);
     List<Donation> findAllByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
     List<Donation> findAllByProjectIdInAndCreatedAtBetween(List<String> projectIds, LocalDate startDate, LocalDate endDate);

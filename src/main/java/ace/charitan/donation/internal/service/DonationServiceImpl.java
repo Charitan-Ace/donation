@@ -218,4 +218,16 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         return responseDto.getProjectDtoList();
     }
 
+    @Override
+    public List<String> getProjectIdsByDonorId(String donorId) {
+        List<Donation> donations = repository.findAllByDonorId(donorId);
+
+        Set<String> projectIds = new HashSet<>();
+        for (Donation donation : donations) {
+            projectIds.add(donation.getProjectId());
+        }
+
+        return new ArrayList<>(projectIds);
+    }
+
 }

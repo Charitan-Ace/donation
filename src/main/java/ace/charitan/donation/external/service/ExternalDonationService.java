@@ -19,4 +19,5 @@ public interface ExternalDonationService {
     Map<String, Double> getDonorDonationStatistics(String donorId);
     Map<String, Double> getDonorsOfTheMonth();
     Map<String, Double> getCharityDonorsOfTheMonth(List<String> projectIds);
+    List<String> getProjectIdsByDonorId(String donorId);
 }

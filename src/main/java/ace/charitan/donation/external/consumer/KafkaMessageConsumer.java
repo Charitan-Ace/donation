@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Component
 class KafkaMessageConsumer {
@@ -90,5 +89,11 @@ class KafkaMessageConsumer {
         return new GetDonorsOfTheMonthResponseDto(donorsAndAmount);
     }
 
+    @KafkaListener(topics = "donation.project-ids-by-donor-id")
+    @SendTo
+    public GetProjectIdsByDonorIdResponseDto handleGetProjectIdsByDonorId(GetProjectIdsByDonorIdRequestDto dto) {
+        List<String> projectIds = service.getProjectIdsByDonorId(dto.getDonorId());
+        return new GetProjectIdsByDonorIdResponseDto(new GetProjectIdsByDonorIdWrapperDto(projectIds));
+    }
 
 }
