@@ -1,6 +1,7 @@
 package ace.charitan.donation.internal.service;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.auth.AuthRequestByEmailDto;
 import ace.charitan.common.dto.auth.ExternalAuthDto;
 import ace.charitan.common.dto.auth.RegisterGuestDto;
 import ace.charitan.common.dto.donation.SendDonationNotificationDto;
@@ -74,6 +75,19 @@ class KafkaMessageProducer {
         ConsumerRecord<String, Object> consumerRecord = replyFuture.get(10, TimeUnit.SECONDS);
 
         return (ExternalAuthDto) consumerRecord.value();
+    }
+
+    public ExternalAuthDto getAuthDtoByEmail(AuthRequestByEmailDto dto) {
+        try {
+            ProducerRecord<String, Object> record = new ProducerRecord<>(DonationProducerTopic.AUTH_GET_BY_EMAIL.getTopic(), dto);
+            RequestReplyFuture<String, Object, Object> replyFuture = replyingKafkaTemplate.sendAndReceive(record);
+            ConsumerRecord<String, Object> consumerRecord = replyFuture.get(5, TimeUnit.SECONDS);
+
+            return (ExternalAuthDto) consumerRecord.value();
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     GetProjectByCharityIdResponseDto sendAndReceive(GetProjectByCharityIdRequestDto requestDto) {

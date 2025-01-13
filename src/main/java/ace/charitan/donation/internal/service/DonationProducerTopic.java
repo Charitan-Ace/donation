@@ -16,7 +16,9 @@ enum DonationProducerTopic {
 
     PAYMENT_CREATE_PAYMENT_REDIRECT_URL("payment.create-payment-redirect-url"),
 
-    AUTH_CREATE_GUEST_USER("auth.guest.create");
+    AUTH_CREATE_GUEST_USER("auth.guest.create"),
+
+    AUTH_GET_BY_EMAIL("auth.get.email");
 
 
     private final String topic;

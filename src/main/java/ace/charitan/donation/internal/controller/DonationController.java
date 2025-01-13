@@ -25,7 +25,7 @@ class DonationController {
     @Autowired
     private InternalDonationService service;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<CreateDonationResponseDto> createDonation(@RequestBody CreateDonationRequestDto dto) throws Exception {
         CreateDonationResponseDto response = service.createDonation(dto);
         return ResponseEntity.status(201).body(response);
