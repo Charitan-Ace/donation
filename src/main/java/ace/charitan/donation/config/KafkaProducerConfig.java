@@ -20,7 +20,7 @@ class KafkaProducerConfig {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
 
-        ConcurrentMessageListenerContainer<String, Object> container = factory.createContainer(REPLY_TOPIC);
+        ConcurrentMessageListenerContainer<String, Object> container = factory.createContainer("donation.reply");
         container.setAutoStartup(true);
         return container;
     }

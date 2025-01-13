@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import ace.charitan.common.dto.auth.AuthRequestByEmailDto;
+import ace.charitan.common.dto.auth.AuthRequestByIdDto;
 import ace.charitan.common.dto.auth.ExternalAuthDto;
 import ace.charitan.common.dto.auth.RegisterGuestDto;
+import ace.charitan.common.dto.email.donation.EmailDonationCreationDto;
 import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlRequestDto;
 import ace.charitan.donation.internal.dto.CreateDonationResponseDto;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,8 @@ import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import ace.charitan.donation.internal.utils.DateUtils;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 
 @Service
@@ -84,17 +88,17 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         String redirectUrl = producer.createPaymentRedirectUrl(new CreateDonationPaymentRedirectUrlRequestDto(userId, savedDonation.getId(), savedDonation.getAmount(), dto.getSuccessUrl(), dto.getCancelUrl())).getRedirectUrl();
 
-        producer.sendDonationNotification(savedDonation);
+//        producer.sendDonationEmail(savedDonation);
 
         return new CreateDonationResponseDto(savedDonation.getId(), savedDonation.getAmount(), savedDonation.getMessage(), savedDonation.getTransactionStripeId(), savedDonation.getProjectId(), savedDonation.getDonorId(), savedDonation.getCreatedAt(), redirectUrl);
     }
 
     @Override
-    public void createMonthlyDonation(Double amount, String message, String transactionStripeId, String projectId, String donorId) {
+    public void createMonthlyDonation(Double amount, String message, String transactionStripeId, String projectId, String donorId) throws ExecutionException, InterruptedException, TimeoutException {
         Donation donation = new Donation(null, amount, message, transactionStripeId, projectId, donorId, null);
 
         Donation savedDonation = repository.save(donation);
-        producer.sendDonationNotification(savedDonation);
+        producer.sendDonationEmail(new EmailDonationCreationDto(savedDonation.getDonorId(), "Monthly donation to project " + projectId, "Your subscription for project " + projectId + " has been charged for this month."));
 
     }
 
@@ -129,7 +133,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
-    public Donation updateDonation(Long id, UpdateDonationRequestDto dto) {
+    public Donation updateDonation(Long id, UpdateDonationRequestDto dto) throws ExecutionException, InterruptedException, TimeoutException {
         Donation donation = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Donation not found"));
 
@@ -142,6 +146,7 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         if (dto.getTransactionStripeId() != null) {
             donation.setTransactionStripeId(dto.getTransactionStripeId());
+            producer.sendDonationEmail(new EmailDonationCreationDto(donation.getDonorId(), "One time donation to project " + donation.getProjectId(), "Your donation to project " + donation.getProjectId() + " has been successfully processed"));
         }
 
         return repository.save(donation);

@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 
 public interface InternalDonationService {
@@ -23,7 +25,7 @@ public interface InternalDonationService {
 
     Page<InternalDonationDto> getAllDonations(int page, int limit);
 
-    InternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto);
+    InternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto) throws ExecutionException, InterruptedException, TimeoutException;
 
     void deleteDonation(Long id);
 

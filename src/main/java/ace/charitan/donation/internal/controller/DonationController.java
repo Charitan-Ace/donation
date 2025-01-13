@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -62,7 +64,7 @@ class DonationController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InternalDonationDto> updateDonation(
-            @PathVariable Long id, @RequestBody UpdateDonationRequestDto dto) {
+            @PathVariable Long id, @RequestBody UpdateDonationRequestDto dto) throws ExecutionException, InterruptedException, TimeoutException {
         InternalDonationDto updatedDonation = service.updateDonation(id, dto);
         return ResponseEntity.ok(updatedDonation);
     }

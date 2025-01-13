@@ -18,7 +18,12 @@ enum DonationProducerTopic {
 
     AUTH_CREATE_GUEST_USER("auth.guest.create"),
 
-    AUTH_GET_BY_EMAIL("auth.get.email");
+    AUTH_GET_BY_EMAIL("auth.get.email"),
+
+    AUTH_GET_BY_ID("auth.get.id"),
+
+    EMAIL_SEND_DONATION_CONFIRMATION("email.donation.create");
+
 
 
     private final String topic;

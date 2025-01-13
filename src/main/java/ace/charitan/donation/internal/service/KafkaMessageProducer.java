@@ -2,13 +2,17 @@ package ace.charitan.donation.internal.service;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
 import ace.charitan.common.dto.auth.AuthRequestByEmailDto;
+import ace.charitan.common.dto.auth.AuthRequestByIdDto;
 import ace.charitan.common.dto.auth.ExternalAuthDto;
 import ace.charitan.common.dto.auth.RegisterGuestDto;
+import ace.charitan.common.dto.donation.DonationDto;
 import ace.charitan.common.dto.donation.SendDonationNotificationDto;
+import ace.charitan.common.dto.email.donation.EmailDonationCreationDto;
 import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlRequestDto;
 import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlResponseDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
+import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.internal.dto.InternalDonationDto;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -63,7 +67,6 @@ class KafkaMessageProducer {
 
     public CreateDonationPaymentRedirectUrlResponseDto createPaymentRedirectUrl(CreateDonationPaymentRedirectUrlRequestDto dto) throws ExecutionException, InterruptedException {
         ProducerRecord<String, Object> record = new ProducerRecord<>(DonationProducerTopic.PAYMENT_CREATE_PAYMENT_REDIRECT_URL.getTopic(), dto);
-        record.headers().add(REPLY_TOPIC, REPLY_TOPIC.getBytes());
         RequestReplyFuture<String, Object, Object> future = replyingKafkaTemplate.sendAndReceive(record);
 
         return (CreateDonationPaymentRedirectUrlResponseDto) future.get().value();
@@ -88,6 +91,23 @@ class KafkaMessageProducer {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public ExternalAuthDto getAuthDtoById(AuthRequestByIdDto dto) {
+        try {
+            ProducerRecord<String, Object> record = new ProducerRecord<>(DonationProducerTopic.AUTH_GET_BY_ID.getTopic(), dto);
+            RequestReplyFuture<String, Object, Object> replyFuture = replyingKafkaTemplate.sendAndReceive(record);
+            ConsumerRecord<String, Object> consumerRecord = replyFuture.get(5, TimeUnit.SECONDS);
+
+            return (ExternalAuthDto) consumerRecord.value();
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void sendDonationEmail(EmailDonationCreationDto dto) {
+        kafkaTemplate.send(DonationProducerTopic.EMAIL_SEND_DONATION_CONFIRMATION.getTopic(), dto);
     }
 
     GetProjectByCharityIdResponseDto sendAndReceive(GetProjectByCharityIdRequestDto requestDto) {

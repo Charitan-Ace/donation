@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @Component
 class KafkaMessageConsumer {
@@ -26,7 +28,7 @@ class KafkaMessageConsumer {
 
 
     @KafkaListener(topics = "update-donation-stripe-id")
-    public void handleUpdateDonationStripeId(UpdateDonationStripeIdDto dto) {
+    public void handleUpdateDonationStripeId(UpdateDonationStripeIdDto dto) throws ExecutionException, InterruptedException, TimeoutException {
         UpdateDonationRequestDto updateDto = new UpdateDonationRequestDto(null, null, dto.getTransactionStripeId());
 
         service.updateDonation(dto.getId(), updateDto);
