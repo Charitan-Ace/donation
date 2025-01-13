@@ -71,8 +71,8 @@ class KafkaMessageConsumer {
 
     @KafkaListener(topics = "charity-donation-statistics")
     @SendTo
-    public GetDonationStatisticsResponseDto handleGetDonorDonationStatistics(GetCharityDonationStatisticsRequestDto dto) {
-        Map<String, Double> charityDonationStatistics = service.getCharityDonationStatistics(dto.getDto().getProjectIds());
+    public GetDonationStatisticsResponseDto handleGetCharityDonationStatistics(GetCharityDonationStatisticsRequestDto dto) {
+        Map<String, Double> charityDonationStatistics = service.getCharityDonationStatistics(dto.getDto().getProjectIds(), dto.getTime());
         return new GetDonationStatisticsResponseDto(charityDonationStatistics);
     }
 

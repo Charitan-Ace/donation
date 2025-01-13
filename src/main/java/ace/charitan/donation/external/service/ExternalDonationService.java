@@ -16,7 +16,7 @@ public interface ExternalDonationService {
     ExternalDonationDto updateDonation(Long id, UpdateDonationRequestDto dto) throws ExecutionException, InterruptedException, TimeoutException;
     ExternalDonationDto getDonationById(Long id);
     List<ExternalDonationDto> getDonationByProjectId(String projectId);
-    Map<String, Double> getCharityDonationStatistics(List<String> projectIds);
+    Map<String, Double> getCharityDonationStatistics(List<String> projectIds, String time);
     Map<String, Double> getDonorDonationStatistics(String donorId);
     Map<String, Double> getDonorsOfTheMonth();
     Map<String, Double> getCharityDonorsOfTheMonth(List<String> projectIds);

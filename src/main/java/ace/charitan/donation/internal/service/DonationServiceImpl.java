@@ -1,5 +1,6 @@
 package ace.charitan.donation.internal.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -193,11 +194,35 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
         return projectDonationTotals;
     }
 
-    public Map<String, Double> getCharityDonationStatistics(List<String> projectIds) {
+    public Map<String, Double> getCharityDonationStatistics(List<String> projectIds, String time) {
         Map<String, Double> projectDonationTotals = new HashMap<>();
 
+        LocalDate startDate = null;
+        if (!time.equalsIgnoreCase("all")) {
+            LocalDate currentDate = LocalDate.now();
+            switch (time.toLowerCase()) {
+                case "week":
+                    startDate = currentDate.minusWeeks(1);
+                    break;
+                case "month":
+                    startDate = currentDate.minusMonths(1);
+                    break;
+                case "year":
+                    startDate = currentDate.minusYears(1);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid time frame: " + time);
+            }
+        }
+
         for (String projectId: projectIds) {
-            List<Donation> projectDonations = repository.findAllByProjectId(projectId);
+            System.out.println(projectId);
+            List<Donation> projectDonations = new ArrayList<>();
+            if (time.equalsIgnoreCase("all")) {
+                projectDonations = repository.findAllByProjectId(projectId);
+            } else {
+                projectDonations = repository.findAllByProjectIdAndCreatedAtAfter(projectId, startDate);
+            }
             for (Donation donation: projectDonations) {
                 if (donation.getProjectId().equals(projectId)) {
                     Double amount = donation.getAmount();
