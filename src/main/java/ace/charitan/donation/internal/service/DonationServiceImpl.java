@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ace.charitan.common.dto.auth.RegisterGuestDto;
 import ace.charitan.common.dto.payment.CreateDonationPaymentRedirectUrlRequestDto;
 import ace.charitan.donation.internal.dto.CreateDonationResponseDto;
 import org.springframework.data.domain.Page;
@@ -49,19 +50,35 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
 
         AuthModel authModel = AuthUtils.getUserDetails();
 
+        String userId = "";
         if (authModel != null) {
             //HANDLE ONE TIME DONATION
-            String userId = authModel.getUsername();
+            userId = authModel.getUsername();
             donation.setDonorId(userId);
         } else {
             //TODO: HANDLE ONE TIME DONATION FOR GUEST
-            String userId = "abcxyz";
-            donation.setDonorId(userId);
+            if (dto.getEmail() != null) {
+                Map<String, String> profile = new HashMap<>() {{
+                    if (dto.getFirstName() != null) {
+                        put("firstName", dto.getFirstName());
+                    }
+                    if (dto.getLastName() != null) {
+                        put("lastName", dto.getLastName());
+                    }
+                    if (dto.getAddress() != null) {
+                        put("address", dto.getAddress());
+                    }
+                }};
+                userId = producer.createGuestAccount(new RegisterGuestDto(dto.getEmail(), profile)).id();
+                donation.setDonorId(userId);
+            } else {
+                throw new RuntimeException("You must provide an email, first name, last name and address when donating as guest");
+            }
         }
 
         Donation savedDonation = repository.save(donation);
 
-        String redirectUrl = producer.createPaymentRedirectUrl(new CreateDonationPaymentRedirectUrlRequestDto(savedDonation.getId(), savedDonation.getAmount(), dto.getSuccessUrl(), dto.getCancelUrl())).getRedirectUrl();
+        String redirectUrl = producer.createPaymentRedirectUrl(new CreateDonationPaymentRedirectUrlRequestDto(userId, savedDonation.getId(), savedDonation.getAmount(), dto.getSuccessUrl(), dto.getCancelUrl())).getRedirectUrl();
 
         producer.sendDonationNotification(savedDonation);
 

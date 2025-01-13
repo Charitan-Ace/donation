@@ -13,7 +13,11 @@ enum DonationProducerTopic {
     // PROJECT_SUBSCRIPTION_NEW_PROJECT("project-subscription-new-project");
 
     PROJECT_GET_ALL_PROJECTS_BY_CHARITY_ID("project.get-all-projects-by-charitan-id"),
-    PAYMENT_CREATE_PAYMENT_REDIRECT_URL("payment.create-payment-redirect-url");
+
+    PAYMENT_CREATE_PAYMENT_REDIRECT_URL("payment.create-payment-redirect-url"),
+
+    AUTH_CREATE_GUEST_USER("auth.guest.create");
+
 
     private final String topic;
 
