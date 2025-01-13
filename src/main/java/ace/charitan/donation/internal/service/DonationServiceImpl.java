@@ -115,6 +115,13 @@ class DonationServiceImpl implements InternalDonationService, ExternalDonationSe
     }
 
     @Override
+    public Page<InternalDonationDto> getDonationByProjectIdInternal(String projectId, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return repository.findAllByProjectId(projectId, pageable)
+                .map(model -> model);
+    }
+
+    @Override
     public Page<InternalDonationDto> getDonationsByUserId(int page, int limit) throws Exception {
         AuthModel authModel = AuthUtils.getUserDetails();
         if (authModel == null) {

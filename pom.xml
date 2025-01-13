@@ -97,12 +97,6 @@
             <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>ace.charitan</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.75-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>0.12.6</version>
@@ -132,6 +126,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ace.charitan</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.79-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

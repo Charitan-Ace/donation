@@ -48,11 +48,20 @@ class DonationController {
         return ResponseEntity.ok(donations);
     }
 
-    @GetMapping("/my-donations")
+    @GetMapping("/donor/my-donations")
     public ResponseEntity<Page<InternalDonationDto>> getAllUserDonations(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit) throws Exception {
         Page<InternalDonationDto> donations = service.getDonationsByUserId(page, limit);
+        return ResponseEntity.ok(donations);
+    }
+
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<Page<InternalDonationDto>> getAllDonationsByProjectId(
+            @PathVariable(name = "projectId") String projectId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit) throws Exception {
+        Page<InternalDonationDto> donations = service.getDonationByProjectIdInternal(projectId, page, limit);
         return ResponseEntity.ok(donations);
     }
 

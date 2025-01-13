@@ -15,4 +15,5 @@ interface DonationRepository extends JpaRepository<Donation, Long> {
     Page<Donation> findAllByDonorId(String donorId, Pageable pageable);
     List<Donation> findAllByCreatedAtBetween(LocalDate startDate, LocalDate endDate);
     List<Donation> findAllByProjectIdInAndCreatedAtBetween(List<String> projectIds, LocalDate startDate, LocalDate endDate);
+    Page<Donation> findAllByProjectId(String projectId, Pageable pageable);
 }

@@ -37,4 +37,5 @@ public interface InternalDonationService {
     Map<String, Double> getCharityDonationStatistics(List<String> projectIds);
     Map<String, Double> getDonorDonationStatistics(String donorId);
 
+    Page<InternalDonationDto> getDonationByProjectIdInternal(String projectId, int page, int limit);
 }
