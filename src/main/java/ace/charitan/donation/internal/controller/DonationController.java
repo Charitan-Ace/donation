@@ -92,15 +92,15 @@ class DonationController {
     }
 
 
-    @GetMapping("/test")
-    public ResponseEntity<Void> test() {
-        Map<String, Double> charity = service.getCharityDonationStatistics(List.of("123", "abc"));
-        Map<String, Double> donor = service.getDonorDonationStatistics("1a2c6825-4a84-4d38-8c50-c65c0f01c83a");
-
-        System.out.println(charity);
-        System.out.println();
-        System.out.println(donor);
-        return ResponseEntity.noContent().build();
-    }
+//    @GetMapping("/test")
+//    public ResponseEntity<Void> test() {
+//        Map<String, Double> charity = service.getCharityDonationStatistics(List.of("123", "abc"));
+//        Map<String, Double> donor = service.getDonorDonationStatistics("1a2c6825-4a84-4d38-8c50-c65c0f01c83a");
+//
+//        System.out.println(charity);
+//        System.out.println();
+//        System.out.println(donor);
+//        return ResponseEntity.noContent().build();
+//    }
 
 }
