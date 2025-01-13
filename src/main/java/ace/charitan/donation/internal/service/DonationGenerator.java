@@ -14,7 +14,7 @@ class DonationGenerator implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         for (int i = 0; i < 100; i++) {
-            Donation donation = new Donation(null, Math.random(), "Skibidi toilet", null, "123", "abc", null);
+            Donation donation = new Donation(null, Math.random(), "Skibidi toilet", null, "0c112e0e-09a0-4c16-8d87-51e2847055cc", "abc", null);
 
             repository.save(donation);
         }
