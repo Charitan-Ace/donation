@@ -6,7 +6,6 @@ import ace.charitan.common.dto.donation.CreateMonthlyDonationDto;
 import ace.charitan.common.dto.donation.UpdateDonationStripeIdDto;
 import ace.charitan.donation.external.dto.ExternalDonationDto;
 import ace.charitan.donation.external.service.ExternalDonationService;
-import ace.charitan.donation.internal.dto.CreateDonationRequestDto;
 import ace.charitan.donation.internal.dto.UpdateDonationRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
