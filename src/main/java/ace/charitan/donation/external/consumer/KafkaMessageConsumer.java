@@ -1,6 +1,5 @@
 package ace.charitan.donation.external.consumer;
 
-
 import ace.charitan.common.dto.donation.*;
 import ace.charitan.common.dto.donation.CreateMonthlyDonationDto;
 import ace.charitan.common.dto.donation.UpdateDonationStripeIdDto;
@@ -25,9 +24,9 @@ class KafkaMessageConsumer {
     private ExternalDonationService service;
     final private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @KafkaListener(topics = "update-donation-stripe-id")
-    public void handleUpdateDonationStripeId(UpdateDonationStripeIdDto dto) throws ExecutionException, InterruptedException, TimeoutException {
+    public void handleUpdateDonationStripeId(UpdateDonationStripeIdDto dto)
+            throws ExecutionException, InterruptedException, TimeoutException {
         UpdateDonationRequestDto updateDto = new UpdateDonationRequestDto(null, null, dto.getTransactionStripeId());
 
         service.updateDonation(dto.getId(), updateDto);
@@ -38,13 +37,15 @@ class KafkaMessageConsumer {
     public DonationDto handleGetDonationById(GetDonationByIdDto reqDto) {
         logger.info("Received request for getting donation by id #{}", reqDto.getId());
         ExternalDonationDto dto = service.getDonationById(reqDto.getId());
-        return new DonationDto(dto.getId(), dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(), dto.getProjectId(), dto.getDonorId(), dto.getCreatedAt());
+        return new DonationDto(dto.getId(), dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(),
+                dto.getProjectId(), dto.getDonorId(), dto.getCreatedAt());
 
     }
 
     @KafkaListener(topics = "create-monthly-donation", groupId = "donation")
     public void handleCreateMonthlyDonation(CreateMonthlyDonationDto dto) throws Exception {
-        service.createMonthlyDonation(dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(), dto.getProjectId(), dto.getDonorId());
+        service.createMonthlyDonation(dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(),
+                dto.getProjectId(), dto.getDonorId());
     }
 
     @KafkaListener(topics = "donation.get.projectId")
@@ -55,9 +56,8 @@ class KafkaMessageConsumer {
         logger.debug("{}", dtos.size());
         return new DonationsDto(
                 dtos.stream().map(dto -> new DonationDto(
-                        dto.getId(), dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(), dto.getProjectId(), dto.getDonorId(), dto.getCreatedAt()
-                )).toList()
-        );
+                        dto.getId(), dto.getAmount(), dto.getMessage(), dto.getTransactionStripeId(),
+                        dto.getProjectId(), dto.getDonorId(), dto.getCreatedAt())).toList());
     }
 
     @KafkaListener(topics = "donor-donation-statistics")
@@ -70,8 +70,10 @@ class KafkaMessageConsumer {
 
     @KafkaListener(topics = "charity-donation-statistics")
     @SendTo
-    public GetDonationStatisticsResponseDto handleGetCharityDonationStatistics(GetCharityDonationStatisticsRequestDto dto) {
-        Map<String, Double> charityDonationStatistics = service.getCharityDonationStatistics(dto.getDto().getProjectIds(), dto.getTime());
+    public GetDonationStatisticsResponseDto handleGetCharityDonationStatistics(
+            GetCharityDonationStatisticsRequestDto dto) {
+        Map<String, Double> charityDonationStatistics = service
+                .getCharityDonationStatistics(dto.getDto().getProjectIds(), dto.getTime());
         return new GetDonationStatisticsResponseDto(charityDonationStatistics);
     }
 
@@ -92,8 +94,12 @@ class KafkaMessageConsumer {
     @KafkaListener(topics = "donation.project-ids-by-donor-id")
     @SendTo
     public GetProjectIdsByDonorIdResponseDto handleGetProjectIdsByDonorId(GetProjectIdsByDonorIdRequestDto dto) {
+        System.out.println("donorId" + dto.getDonorId());
         List<String> projectIds = service.getProjectIdsByDonorId(dto.getDonorId());
-        return new GetProjectIdsByDonorIdResponseDto(new GetProjectIdsByDonorIdWrapperDto(projectIds));
+        GetProjectIdsByDonorIdResponseDto responseDto =  new GetProjectIdsByDonorIdResponseDto(new GetProjectIdsByDonorIdWrapperDto(projectIds));
+        System.out.println("GetProjectIdsByDonorIdResponseDto" + responseDto);
+
+        return responseDto;
     }
 
 }
